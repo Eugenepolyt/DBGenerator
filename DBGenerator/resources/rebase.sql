@@ -43,6 +43,7 @@ CREATE type rare_type as ENUM (
 
 CREATE TABLE popular_cosmetics
 (
+    cosmetic_id serial PRIMARY KEY,
 	hero_id integer REFERENCES hero(hero_id) NOT NULL,
 	cosmetic_name varchar(50) NOT NULL,
 	rare rare_type NOT NULL,
@@ -54,6 +55,7 @@ CREATE type spell_type as ENUM ('active', 'passive');
 
 CREATE TABLE abilities
 (
+    ability_id serial PRIMARY KEY,
 	hero_id integer REFERENCES hero(hero_id) NOT NULL,
 	ability_name varchar(30) NOT NULL,
 	ability_type spell_type NOT NULL,
@@ -64,7 +66,8 @@ CREATE TABLE abilities
 
 CREATE TABLE characteristic
 (
-	hero_id integer REFERENCES hero(hero_id) NOT NULL,
+    characteristic_id serial PRIMARY KEY,
+	hero_id integer REFERENCES hero(hero_id) UNIQUE NOT NULL,
 	damage integer NOT NULL,
 	armor NUMERIC(10, 2) NOT NULL,
 	movespeed integer NOT NULL,
@@ -94,6 +97,7 @@ CREATE TABLE item_hero_statistic
 
 CREATE TABLE top_hero_players
 (
+    player_id serial PRIMARY KEY,
 	hero_id integer REFERENCES hero(hero_id) NOT NULL,
     nickname varchar(30) NOT NULL,
 	matches_cnt integer NOT NULL,

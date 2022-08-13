@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Tables: String {
+enum Tables: String, CaseIterable {
     case top_hero_players = "hero_player_statistic"
     case item_hero_statistic = "item_hero_statistic"
     case popular_cosmetics = "popular_cosmetics"

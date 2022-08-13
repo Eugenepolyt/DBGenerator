@@ -17,12 +17,10 @@ class DataGenerator {
     var preparedHeroes: Set<String>
     var preparedItems: Set<String>
     var preparedPlayers: Set<String>
-    
-    var gamesList = [String]()
-    var heroesList = [String]()
-    var itemsList = [String]()
+
+    var savedDataId: [Tables : Int] = [:]
+
     var itemPopularity = [Int:Int]()
-    var playersList = [String]()
 
     init() {
         configuration.host = "localhost"
@@ -34,6 +32,10 @@ class DataGenerator {
         preparedHeroes = DataGenerator.getSetDataFrom(resourse: .heroes)
         preparedItems = DataGenerator.getSetDataFrom(resourse: .items)
         preparedPlayers = DataGenerator.getSetDataFrom(resourse: .players)
+        
+        for table in Tables.allCases {
+            savedDataId[table] = 0
+        }
     }
     
     func generateDataTo(table: Tables, amountOfdata count: Int) {
@@ -48,35 +50,35 @@ class DataGenerator {
         
         switch table {
         case .game:
-            generateData(by: generateDataGame, max: 26)
+            generateData(by: generateDataGame, max: preparedGames.count)
         case .hero:
-            generateData(by: generateDataHero, max: 5163)
+            generateData(by: generateDataHero, max: preparedHeroes.count)
         case .items:
             // Ensure the unique popularity of the item within the game
-            for i in 1...gamesList.count {
+            for i in 1...savedDataId[.game]! {
                 itemPopularity[i] = 1
             }
-            
-            generateData(by: generateDataItem, max: 1094)
+            generateData(by: generateDataItem, max: preparedItems.count)
         case .abilities:
-            generateDataAbility()
+            generateData(by: generateDataAbility, max: Int.max)
         case .characteristic:
-            generateDataCharacteristic()
+            generateData(by: generateDataCharacteristic, max: savedDataId[.hero]! - savedDataId[.characteristic]!)
         case .popular_cosmetics:
             generateData(by: generateDataPopularCosmetics, max: Int.max)
+        case .top_hero_players:
+            generateData(by: generateDataHeroPlayer, max: preparedPlayers.count)
         case .item_hero_statistic:
             generateDataItemHero()
-        case .top_hero_players:
-            generateData(by: generateDataHeroPlayer, max: 995)
         }
         
     }
     
     private func generateDataGame() {
-        let name = takeNameFrom(prepared: preparedGames, to: &gamesList)
+        let name = takeNameFrom(prepared: &preparedGames)
         let date = PostgresDate(year: Int.random(in: 1995...2021),
                                 month: Int.random(in: 1...12),
                                 day: Int.random(in: 1...28))
+        savedDataId[.game]! += 1
         
         let command = "INSERT INTO game (game_name, release_date) VALUES ($1, $2);"
         
@@ -84,9 +86,9 @@ class DataGenerator {
     }
     
     private func generateDataHero() {
-        let name = takeNameFrom(prepared: preparedHeroes, to: &heroesList)
-        let gamesId = Int.random(in: 1...gamesList.count)
-        
+        let name = takeNameFrom(prepared: &preparedHeroes)
+        let gamesId = Int.random(in: 1...savedDataId[.game]!)
+        savedDataId[.hero]! += 1
         let attackType = ["ranged", "melee"].randomElement()
         let winrate = getWinrate()
         
@@ -95,23 +97,14 @@ class DataGenerator {
         executeCommand(command: command, parametres: [gamesId, name, attackType, winrate])
     }
     
-    private func generateDataPlayers() {
-        let name = takeNameFrom(prepared: preparedPlayers, to: &playersList)
-        let matches = Int.random(in: 1...20000)
-        let winrate = getWinrate()
-        
-        let command = "INSERT INTO top_players (nickname, matches_cnt, winrate) VALUES ($1, $2, $3);"
-        
-        executeCommand(command: command, parametres: [name, matches, winrate])
-    }
-    
     
     private func generateDataItem() {
-        let name = takeNameFrom(prepared: preparedItems, to: &itemsList)
-        let gamesId = Int.random(in: 1...gamesList.count)
+        let name = takeNameFrom(prepared: &preparedItems)
+        let gamesId = Int.random(in: 1...savedDataId[.game]!)
         let price = Int.random(in: 1000...7000)
         let popularity = itemPopularity[gamesId]
         itemPopularity[gamesId] = itemPopularity[gamesId]! + 1
+        savedDataId[.items]! += 1
         
         let winrate = getWinrate()
         
@@ -122,48 +115,49 @@ class DataGenerator {
     
     private func generateDataAbility() {
         
-        for i in 1...heroesList.count {
-            for _ in 1...4 {
-                let name = randomString(length: Int.random(in: 4...8)) + " " + randomString(length: Int.random(in: 4...8))
-                let spellType = ["active", "passive"].randomElement()
-                
-                let manacost: PostgresValue?
-                let cooldown: PostgresValue?
-                if spellType == "passive" {
-                    manacost = nil
-                    cooldown = nil
-                } else {
-                    manacost = Int.random(in: 0...400).postgresValue
-                    cooldown = Double.random(in: 1...300).postgresValue
-                }
-                let description = randomString(length: Int.random(in: 1...70))
-                
-                let command = "INSERT INTO abilities (hero_id, ability_name, ability_type, manacost, cooldown, description)"
-                let values = " VALUES ($1, $2, $3, $4, $5, $6);"
-                executeCommand(command: command + values, parametres: [i, name, spellType, manacost, cooldown, description])
-            }
+        let heroId = Int.random(in: 1...savedDataId[.hero]!)
+        let name = randomString(length: Int.random(in: 4...8)) + " " + randomString(length: Int.random(in: 4...8))
+        let spellType = ["active", "passive"].randomElement()
+        
+        let manacost: PostgresValue?
+        let cooldown: PostgresValue?
+        if spellType == "passive" {
+            manacost = nil
+            cooldown = nil
+        } else {
+            manacost = Int.random(in: 0...400).postgresValue
+            cooldown = Double.random(in: 1...300).postgresValue
         }
+        let description = randomString(length: Int.random(in: 1...70))
+        
+        savedDataId[.abilities]! += 1
+        
+        let command = "INSERT INTO abilities (hero_id, ability_name, ability_type, manacost, cooldown, description)"
+        let values = " VALUES ($1, $2, $3, $4, $5, $6);"
+        executeCommand(command: command + values, parametres: [heroId, name, spellType, manacost, cooldown, description])
+        
         
     }
     
     private func generateDataCharacteristic() {
         
-        for i in 1...heroesList.count {
-            let damage = Int.random(in: 20...150)
-            let armor = Double.random(in: 0...10)
-            let movespeed = Int.random(in: 50...400)
-            let attackSpeed = Double.random(in: 0.5...4)
-            
-            let command = "INSERT INTO characteristic (hero_id, damage, armor, movespeed, attack_speed)"
-            let values = " VALUES ($1, $2, $3, $4, $5);"
-            
-            executeCommand(command: command + values, parametres: [i, damage, armor, movespeed, attackSpeed])
-        }
+        savedDataId[.characteristic]! += 1
+        
+        let hero_id = savedDataId[.characteristic]
+        let damage = Int.random(in: 20...150)
+        let armor = Double.random(in: 0...10)
+        let movespeed = Int.random(in: 50...400)
+        let attackSpeed = Double.random(in: 0.5...4)
+        
+        let command = "INSERT INTO characteristic (hero_id, damage, armor, movespeed, attack_speed)"
+        let values = " VALUES ($1, $2, $3, $4, $5);"
+        
+        executeCommand(command: command + values, parametres: [hero_id, damage, armor, movespeed, attackSpeed])
         
     }
     
     private func generateDataPopularCosmetics() {
-        let heroId = Int.random(in: 1...heroesList.count)
+        let heroId = Int.random(in: 1...savedDataId[.hero]!)
         let name = randomString(length: Int.random(in: 3...10)) + " " + randomString(length: Int.random(in: 3...15))
         let rare = ["common",
                     "uncommon",
@@ -173,6 +167,7 @@ class DataGenerator {
                     "immortal",
                     "arcana"].randomElement()
         let price = Double.random(in: 0.01...5000)
+        savedDataId[.popular_cosmetics]! += 1
         
         let command = "INSERT INTO popular_cosmetics (hero_id, cosmetic_name, rare, price) VALUES ($1, $2, $3, $4);"
         
@@ -181,8 +176,8 @@ class DataGenerator {
     
     private func generateDataItemHero() {
         
-        for heroId in 1...heroesList.count {
-            for itemId in 1...itemsList.count {
+        for heroId in 1...savedDataId[.hero]! {
+            for itemId in 1...savedDataId[.items]! {
                 
                 let matches = Int.random(in: 0...20000)
                 let winrate = getWinrate()
@@ -195,13 +190,13 @@ class DataGenerator {
         
     }
     
-    
     private func generateDataHeroPlayer() {
-        let heroId = Int.random(in: 1...heroesList.count)
-        let name = takeNameFrom(prepared: preparedPlayers, to: &playersList)
+        let heroId = Int.random(in: 1...savedDataId[.hero]!)
+        let name = takeNameFrom(prepared: &preparedPlayers)
         let matches = Int.random(in: 500...20000)
         let winrate = Double.random(in: 56...100)
         let kda = Double.random(in: 0...30)
+        savedDataId[.top_hero_players]! += 1
         
         let command = "INSERT INTO top_hero_players (hero_id, nickname, matches_cnt, winrate, kda) VALUES ($1, $2, $3, $4, $5);"
         
@@ -209,14 +204,13 @@ class DataGenerator {
     }
     
     
-    private func takeNameFrom(prepared: Set<String>, to baseArray: inout [String]) -> String {
-        let difference = prepared.symmetricDifference(baseArray)
-        let name = difference.randomElement()!
-        baseArray.append(name)
+    private func takeNameFrom(prepared: inout Set<String>) -> String {
+        let name = prepared.randomElement()!
+        prepared.remove(name)
         return name
     }
     
-    func randomString(length: Int) -> String {
+    private func randomString(length: Int) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyz"
         let random = String((0..<length).map{ _ in letters.randomElement()! })
         return random.prefix(1).uppercased() + random.dropFirst()
@@ -281,7 +275,7 @@ class DataGenerator {
         }
     }
     
-    func executeCommand(command text: String) {
+    private func executeCommand(command text: String) {
         do {
             let connection = try PostgresClientKit.Connection(configuration: configuration)
             defer { connection.close() }
