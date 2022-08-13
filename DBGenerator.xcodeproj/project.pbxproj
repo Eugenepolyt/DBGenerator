@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F901072A28A5302600C5687F /* DataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F901072928A5302600C5687F /* DataGenerator.swift */; };
+		F901072C28A5343000C5687F /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = F901072B28A5343000C5687F /* Tables.swift */; };
+		F9598BD128A56EBA003047C7 /* ResoursesPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */; };
+		F97BDA7228A469130087A7E8 /* PostgresClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = F97BDA7128A469130087A7E8 /* PostgresClientKit */; };
 		F9B49E4328A412D700D199A2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B49E4228A412D700D199A2 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +27,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F901072928A5302600C5687F /* DataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGenerator.swift; sourceTree = "<group>"; };
+		F901072B28A5343000C5687F /* Tables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tables.swift; sourceTree = "<group>"; };
+		F9598BCE28A56018003047C7 /* rebase.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rebase.sql; sourceTree = "<group>"; };
+		F9598BCF28A56949003047C7 /* MobaGames */ = {isa = PBXFileReference; lastKnownFileType = text; path = MobaGames; sourceTree = "<group>"; };
+		F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResoursesPaths.swift; sourceTree = "<group>"; };
+		F9598BD228A5ABD2003047C7 /* Heroes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Heroes.txt; sourceTree = "<group>"; };
+		F9598BD328A5BC6D003047C7 /*  Items.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = " Items.txt"; sourceTree = "<group>"; };
+		F9598BD428A672E5003047C7 /* Players.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Players.txt; sourceTree = "<group>"; };
 		F9B49E3F28A412D700D199A2 /* DBGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DBGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B49E4228A412D700D199A2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -32,12 +44,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F97BDA7228A469130087A7E8 /* PostgresClientKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F9598BCD28A55FF6003047C7 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				F9598BD228A5ABD2003047C7 /* Heroes.txt */,
+				F9598BCE28A56018003047C7 /* rebase.sql */,
+				F9598BCF28A56949003047C7 /* MobaGames */,
+				F9598BD328A5BC6D003047C7 /*  Items.txt */,
+				F9598BD428A672E5003047C7 /* Players.txt */,
+			);
+			path = resources;
+			sourceTree = "<group>";
+		};
 		F9B49E3628A412D700D199A2 = {
 			isa = PBXGroup;
 			children = (
@@ -57,7 +82,11 @@
 		F9B49E4128A412D700D199A2 /* DBGenerator */ = {
 			isa = PBXGroup;
 			children = (
+				F9598BCD28A55FF6003047C7 /* resources */,
 				F9B49E4228A412D700D199A2 /* main.swift */,
+				F901072928A5302600C5687F /* DataGenerator.swift */,
+				F901072B28A5343000C5687F /* Tables.swift */,
+				F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */,
 			);
 			path = DBGenerator;
 			sourceTree = "<group>";
@@ -78,6 +107,9 @@
 			dependencies = (
 			);
 			name = DBGenerator;
+			packageProductDependencies = (
+				F97BDA7128A469130087A7E8 /* PostgresClientKit */,
+			);
 			productName = DBGenerator;
 			productReference = F9B49E3F28A412D700D199A2 /* DBGenerator */;
 			productType = "com.apple.product-type.tool";
@@ -106,6 +138,9 @@
 				Base,
 			);
 			mainGroup = F9B49E3628A412D700D199A2;
+			packageReferences = (
+				F97BDA7028A469130087A7E8 /* XCRemoteSwiftPackageReference "PostgresClientKit" */,
+			);
 			productRefGroup = F9B49E4028A412D700D199A2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -121,6 +156,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9B49E4328A412D700D199A2 /* main.swift in Sources */,
+				F901072C28A5343000C5687F /* Tables.swift in Sources */,
+				F9598BD128A56EBA003047C7 /* ResoursesPaths.swift in Sources */,
+				F901072A28A5302600C5687F /* DataGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +318,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F97BDA7028A469130087A7E8 /* XCRemoteSwiftPackageReference "PostgresClientKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/codewinsdotcom/PostgresClientKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F97BDA7128A469130087A7E8 /* PostgresClientKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F97BDA7028A469130087A7E8 /* XCRemoteSwiftPackageReference "PostgresClientKit" */;
+			productName = PostgresClientKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F9B49E3728A412D700D199A2 /* Project object */;
 }
