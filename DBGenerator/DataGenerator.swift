@@ -243,7 +243,7 @@ class DataGenerator {
                              WHERE hero_id = NEW.hero_id);
                 
                 IF item_game <> game_game THEN
-                    DELETE FROM item_hero_statistic WHERE hero_id = NEW.hero_id AND item_id = NEW.item_id;
+                    RAISE EXCEPTION 'Unable to add item and hero from different games';
                 END IF;
                 
                 RETURN NEW;
@@ -254,7 +254,7 @@ class DataGenerator {
         // recreate trigger
         
         generator.executeCommand(command: """
-                CREATE TRIGGER delete_different_games AFTER INSERT ON item_hero_statistic
+                CREATE TRIGGER delete_different_games BEFORE INSERT ON item_hero_statistic
                     FOR EACH ROW EXECUTE PROCEDURE delete_different_games();
         """)
     }
