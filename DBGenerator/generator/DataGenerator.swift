@@ -12,6 +12,7 @@ import PostgresClientKit
 class DataGenerator {
 
     var configuration = PostgresClientKit.ConnectionConfiguration()
+    var connection: Connection
     
     var preparedGames: Set<String>
     var preparedHeroes: Set<String>
@@ -27,6 +28,14 @@ class DataGenerator {
         configuration.database = "mobadb"
         configuration.user = "postgres"
         configuration.credential = .trust
+        
+        do {
+            self.connection = try PostgresClientKit.Connection(configuration: configuration)
+        } catch {
+            print("Can not connect to database") // better error handling goes here
+        }
+        
+        connection = try! Connection(configuration: configuration)
         
         preparedGames = DataGenerator.getSetDataFrom(resourse: .games)
         preparedHeroes = DataGenerator.getSetDataFrom(resourse: .heroes)
@@ -66,7 +75,7 @@ class DataGenerator {
         case .popular_cosmetics:
             generateData(by: generateDataPopularCosmetics, max: Int.max)
         case .top_hero_players:
-            generateData(by: generateDataHeroPlayer, max: preparedPlayers.count)
+            generateData(by: generateDataHeroPlayer, max: Int.max)
         case .item_hero_statistic:
             generateDataItemHero()
         }
@@ -192,7 +201,7 @@ class DataGenerator {
     
     private func generateDataHeroPlayer() {
         let heroId = Int.random(in: 1...savedDataId[.hero]!)
-        let name = takeNameFrom(prepared: &preparedPlayers)
+        let name = randomString(length: Int.random(in: 3...8))
         let matches = Int.random(in: 500...20000)
         let winrate = Double.random(in: 56...100)
         let kda = Double.random(in: 0...30)
@@ -229,7 +238,7 @@ class DataGenerator {
         }
         
         // recreate function
-        generator.executeCommand(command: """
+        executeCommand(command: """
         CREATE FUNCTION delete_different_games() RETURNS trigger AS $delete_different_games$
             DECLARE
             item_game integer;
@@ -253,29 +262,31 @@ class DataGenerator {
         
         // recreate trigger
         
-        generator.executeCommand(command: """
+        executeCommand(command: """
                 CREATE TRIGGER delete_different_games BEFORE INSERT ON item_hero_statistic
                     FOR EACH ROW EXECUTE PROCEDURE delete_different_games();
         """)
     }
 
     
-    private func executeCommand(command text: String, parametres: [PostgresValueConvertible?]) {
+    func executeCommand(command text: String, parametres: [PostgresValueConvertible?]) -> [[PostgresValue]]? {
         do {
-            let connection = try PostgresClientKit.Connection(configuration: configuration)
-            defer { connection.close() }
-
             let statement = try connection.prepareStatement(text: text)
             defer { statement.close() }
-            
             let cursor = try statement.execute(parameterValues: parametres)
-            do { cursor.close() }
+            defer { cursor.close() }
+            var result = [[PostgresValue]]()
+            for row in cursor {
+                result.append(try row.get().columns)
+            }
+            return result
         } catch {
             print("Something goes wrong") // better error handling goes here
         }
+        return nil
     }
     
-    private func executeCommand(command text: String) {
+    func executeCommand(command text: String) {
         do {
             let connection = try PostgresClientKit.Connection(configuration: configuration)
             defer { connection.close() }

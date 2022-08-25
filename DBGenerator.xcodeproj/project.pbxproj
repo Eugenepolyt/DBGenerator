@@ -11,6 +11,10 @@
 		F901072C28A5343000C5687F /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = F901072B28A5343000C5687F /* Tables.swift */; };
 		F9598BD128A56EBA003047C7 /* ResoursesPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */; };
 		F97BDA7228A469130087A7E8 /* PostgresClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = F97BDA7128A469130087A7E8 /* PostgresClientKit */; };
+		F9AD36FF28B516F7008A3884 /* LRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AD36FE28B516F7008A3884 /* LRU.swift */; };
+		F9AD370328B51F47008A3884 /* CacheDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AD370228B51F47008A3884 /* CacheDB.swift */; };
+		F9AD370528B5295A008A3884 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AD370428B5295A008A3884 /* Keys.swift */; };
+		F9AD370728B546E5008A3884 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AD370628B546E5008A3884 /* TestFunctions.swift */; };
 		F9B49E4328A412D700D199A2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B49E4228A412D700D199A2 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +39,10 @@
 		F9598BD228A5ABD2003047C7 /* Heroes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Heroes.txt; sourceTree = "<group>"; };
 		F9598BD328A5BC6D003047C7 /*  Items.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = " Items.txt"; sourceTree = "<group>"; };
 		F9598BD428A672E5003047C7 /* Players.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Players.txt; sourceTree = "<group>"; };
+		F9AD36FE28B516F7008A3884 /* LRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRU.swift; sourceTree = "<group>"; };
+		F9AD370228B51F47008A3884 /* CacheDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheDB.swift; sourceTree = "<group>"; };
+		F9AD370428B5295A008A3884 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		F9AD370628B546E5008A3884 /* TestFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFunctions.swift; sourceTree = "<group>"; };
 		F9B49E3F28A412D700D199A2 /* DBGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DBGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B49E4228A412D700D199A2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,6 +71,27 @@
 			path = resources;
 			sourceTree = "<group>";
 		};
+		F9AD36F628B5084F008A3884 /* generator */ = {
+			isa = PBXGroup;
+			children = (
+				F901072928A5302600C5687F /* DataGenerator.swift */,
+				F901072B28A5343000C5687F /* Tables.swift */,
+				F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */,
+			);
+			path = generator;
+			sourceTree = "<group>";
+		};
+		F9AD36F728B51372008A3884 /* cache */ = {
+			isa = PBXGroup;
+			children = (
+				F9AD370628B546E5008A3884 /* TestFunctions.swift */,
+				F9AD36FE28B516F7008A3884 /* LRU.swift */,
+				F9AD370228B51F47008A3884 /* CacheDB.swift */,
+				F9AD370428B5295A008A3884 /* Keys.swift */,
+			);
+			path = cache;
+			sourceTree = "<group>";
+		};
 		F9B49E3628A412D700D199A2 = {
 			isa = PBXGroup;
 			children = (
@@ -82,11 +111,10 @@
 		F9B49E4128A412D700D199A2 /* DBGenerator */ = {
 			isa = PBXGroup;
 			children = (
+				F9AD36F728B51372008A3884 /* cache */,
+				F9AD36F628B5084F008A3884 /* generator */,
 				F9598BCD28A55FF6003047C7 /* resources */,
 				F9B49E4228A412D700D199A2 /* main.swift */,
-				F901072928A5302600C5687F /* DataGenerator.swift */,
-				F901072B28A5343000C5687F /* Tables.swift */,
-				F9598BD028A56EBA003047C7 /* ResoursesPaths.swift */,
 			);
 			path = DBGenerator;
 			sourceTree = "<group>";
@@ -156,9 +184,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9B49E4328A412D700D199A2 /* main.swift in Sources */,
+				F9AD370528B5295A008A3884 /* Keys.swift in Sources */,
 				F901072C28A5343000C5687F /* Tables.swift in Sources */,
 				F9598BD128A56EBA003047C7 /* ResoursesPaths.swift in Sources */,
+				F9AD370328B51F47008A3884 /* CacheDB.swift in Sources */,
 				F901072A28A5302600C5687F /* DataGenerator.swift in Sources */,
+				F9AD36FF28B516F7008A3884 /* LRU.swift in Sources */,
+				F9AD370728B546E5008A3884 /* TestFunctions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
